@@ -9,10 +9,7 @@ import {
 } from '@heroicons/react/outline';
 
 import GithubIcon from '../components/Icon/GithubIcon';
-import InstagramIcon from '../components/Icon/InstagramIcon';
 import LinkedInIcon from '../components/Icon/LinkedInIcon';
-import StackOverflowIcon from '../components/Icon/StackOverflowIcon';
-import TwitterIcon from '../components/Icon/TwitterIcon';
 import heroImage from '../images/header-background.webp';
 import porfolioImage1 from '../images/portfolio/portfolio-1.jpg';
 import porfolioImage2 from '../images/portfolio/portfolio-2.jpg';
@@ -44,8 +41,8 @@ import {
  * Page meta data
  */
 export const homePageMeta: HomepageMeta = {
-  title: 'React Resume Template',
-  description: "Example site built with Tim Baker's react resume template",
+  title: 'Sushrut Hajirnis',
+  description: "Thank you Tim Baker for providing this wonderful template",
 };
 
 /**
@@ -69,32 +66,22 @@ export type SectionId = typeof SectionId[keyof typeof SectionId];
  */
 export const heroData: Hero = {
   imageSrc: heroImage,
-  name: `I'm Tim Baker.`,
+  name: `Hi ! I'm Sushrut Hajirnis.`,
   description: (
     <>
       <p className="prose-sm text-stone-200 sm:prose-base lg:prose-lg">
-        I'm a Victoria based <strong className="text-stone-100">Full Stack Software Engineer</strong>, currently working
-        at <strong className="text-stone-100">Instant Domains</strong> helping build a modern, mobile-first, domain
-        registrar and site builder.
-      </p>
-      <p className="prose-sm text-stone-200 sm:prose-base lg:prose-lg">
-        In my free time time, you can catch me training in <strong className="text-stone-100">Muay Thai</strong>,
-        plucking my <strong className="text-stone-100">banjo</strong>, or exploring beautiful{' '}
-        <strong className="text-stone-100">Vancouver Island</strong>.
+        I'm a California based <strong className="text-stone-100">Site Reliability Engineer</strong>, currently working
+        at <strong className="text-stone-100">Intuit</strong> helping build reliability and confidence in the infrastructure at Intuit that Powers
+        Prosperity Around the World
       </p>
     </>
   ),
   actions: [
     {
-      href: '/assets/resume.pdf',
+      href: 'assets/resume.pdf',
       text: 'Resume',
       primary: true,
       Icon: DownloadIcon,
-    },
-    {
-      href: `#${SectionId.Contact}`,
-      text: 'Contact',
-      primary: false,
     },
   ],
 };
@@ -104,16 +91,18 @@ export const heroData: Hero = {
  */
 export const aboutData: About = {
   profileImageSrc: profilepic,
-  description: `Use this bio section as your way of describing yourself and saying what you do, what technologies you like
-  to use or feel most comfortable with, describing your personality, or whatever else you feel like throwing
-  in.`,
+  description: `Hi I am Sushrut Hajirnis, learner and tech-curious if that is even a word. I love all things reliability, always interested in finding 
+  out how things work behind the scenes. I was born and raised in India and moved to the United States in 2012 to pursue my Masters'. 
+  I am working as a Site Reliability Engineer at Intuit the makers of TurboTax.
+  
+  Outside of work, I like reading and following my two favorite sports Tennis and Cricket as well as trying to get in a set or two of Tennis`,
   aboutItems: [
-    {label: 'Location', text: 'Victoria, BC', Icon: MapIcon},
-    {label: 'Age', text: '29', Icon: CalendarIcon},
-    {label: 'Nationality', text: 'Canadian / Irish', Icon: FlagIcon},
-    {label: 'Interests', text: 'Motorcycles, Muay Thai, Banjos', Icon: SparklesIcon},
-    {label: 'Study', text: 'University of Victoria', Icon: AcademicCapIcon},
-    {label: 'Employment', text: 'Instant Domains, inc.', Icon: OfficeBuildingIcon},
+    {label: 'Location', text: 'San Diego, CA', Icon: MapIcon},
+    {label: 'Age', text: '33', Icon: CalendarIcon},
+    {label: 'Nationality', text: 'Indian', Icon: FlagIcon},
+    {label: 'Interests', text: 'Reading, Tennis, Cricket', Icon: SparklesIcon},
+    {label: 'Study', text: 'San Jose State University', Icon: AcademicCapIcon},
+    {label: 'Employment', text: 'Intuit, inc.', Icon: OfficeBuildingIcon},
   ],
 };
 
@@ -126,32 +115,36 @@ export const skills: SkillGroup[] = [
     skills: [
       {
         name: 'English',
+        level: 8,
+      },
+      {
+        name: 'Marathi',
         level: 10,
       },
       {
-        name: 'French',
-        level: 4,
-      },
-      {
-        name: 'Spanish',
-        level: 3,
+        name: 'Hindi',
+        level: 9,
       },
     ],
   },
   {
-    name: 'Frontend development',
+    name: 'Infrastructure',
     skills: [
       {
-        name: 'React',
-        level: 9,
+        name: 'Kubernetes',
+        level: 8,
       },
       {
-        name: 'Typescript',
+        name: 'Observability',
         level: 7,
       },
       {
         name: 'GraphQL',
         level: 6,
+      },
+      {
+        name: 'CloudFormation',
+        level: 5,
       },
     ],
   },
@@ -159,33 +152,16 @@ export const skills: SkillGroup[] = [
     name: 'Backend development',
     skills: [
       {
-        name: 'Node.js',
-        level: 8,
-      },
-      {
-        name: 'Rust',
-        level: 5,
-      },
-      {
         name: 'Golang',
+        level: 7,
+      },
+      {
+        name: 'Java',
+        level: 6,
+      },
+      {
+        name: 'Python',
         level: 4,
-      },
-    ],
-  },
-  {
-    name: 'Mobile development',
-    skills: [
-      {
-        name: 'React Native',
-        level: 9,
-      },
-      {
-        name: 'Flutter',
-        level: 4,
-      },
-      {
-        name: 'Swift',
-        level: 3,
       },
     ],
   },
@@ -266,43 +242,51 @@ export const portfolioItems: PortfolioItem[] = [
 /**
  * Resume section -- TODO: Standardize resume contact format or offer MDX
  */
-export const education: TimelineItem[] = [
+export const experience: TimelineItem[] = [
   {
-    date: 'April 2007',
-    location: 'Clown college',
-    title: 'Masters in Beer tasting',
-    content: <p>Describe your experience at school, what you learned, what useful skills you have acquired etc.</p>,
+    date: 'October 2015 - Present',
+    location: 'Intuit, inc',
+    title: 'Senior Site Reliability Engineer',
+    content: (
+      <p>
+        Working on integrating Litmus Chaos tool to help developer teams build microservices with greater confidence and resliliency
+      </p>
+    ),
   },
   {
-    date: 'March 2003',
-    location: 'School of Business',
-    title: 'What did you study 101',
-    content: <p>Describe your experience at school, what you learned, what useful skills you have acquired etc.</p>,
+    date: 'June 2015 - October 2015',
+    location: 'Qualcomm inc',
+    title: 'Engineer I',
+    content: (
+      <p>
+        Worked on the RMS system that links network service providers and SIM registration.
+      </p>
+    ),
+  },
+  {
+    date: 'Feb 2014 - December 2014',
+    location: 'PTC(Parametric Technology Corporation)',
+    title: 'Software Engineer Intern',
+    content: (
+      <p>
+        Created python based scripts to automate installation and local testing of Windchill suite of products.
+      </p>
+    ),
   },
 ];
 
-export const experience: TimelineItem[] = [
+export const education: TimelineItem[] = [
   {
-    date: 'March 2010 - Present',
-    location: 'Awesome Development Company',
-    title: 'Senior UX Engineer',
-    content: (
-      <p>
-        Describe work, special projects, notable achievements, what technologies you have been working with, and
-        anything else that would be useful for an employer to know.
-      </p>
-    ),
+    date: 'December 2014',
+    location: 'San Jose State University',
+    title: 'Masters in Software Engineering',
+    content: <p>Specilization in Enterprise Software Technologies. Introduction to technologies like Apache Storm,Apache Kafka,SpringBoot</p>,
   },
   {
-    date: 'March 2007 - February 2010',
-    location: 'Garage Startup Studio',
-    title: 'Junior bug fixer',
-    content: (
-      <p>
-        Describe work, special projects, notable achievements, what technologies you have been working with, and
-        anything else that would be useful for an employer to know.
-      </p>
-    ),
+    date: 'August 2011',
+    location: 'University of Mumbai',
+    title: 'Bachelors in Computer Engineering',
+    content: <p>Introduction to Algorithms. Introduction to Computer Architecture. Basics of programming</p>,
   },
 ];
 
@@ -365,9 +349,6 @@ export const contact: ContactSection = {
  * Social items
  */
 export const socialLinks: Social[] = [
-  {label: 'Github', Icon: GithubIcon, href: 'https://github.com/tbakerx'},
-  {label: 'Stack Overflow', Icon: StackOverflowIcon, href: 'https://stackoverflow.com/users/8553186/tim-baker'},
-  {label: 'LinkedIn', Icon: LinkedInIcon, href: 'https://www.linkedin.com/in/timbakerx/'},
-  {label: 'Instagram', Icon: InstagramIcon, href: 'https://www.instagram.com/tbakerx/'},
-  {label: 'Twitter', Icon: TwitterIcon, href: 'https://twitter.com/TimBakerx'},
+  {label: 'Github', Icon: GithubIcon, href: 'https://github.com/sushruthajirnis'},
+  {label: 'LinkedIn', Icon: LinkedInIcon, href: 'https://www.linkedin.com/in/sushruthajirnis/'},
 ];

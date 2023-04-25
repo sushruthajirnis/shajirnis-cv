@@ -28,7 +28,10 @@ const nextConfig = {
   swcMinify: true,
   trailingSlash: false,
   images: {
-    domains: ['images.unsplash.com', 'source.unsplash.com'],
+    domains: ['images.unsplash.com', 'source.unsplash.com','github.com'],
+    loader: "akamai",
+    path : "",
+    
   },
 };
 

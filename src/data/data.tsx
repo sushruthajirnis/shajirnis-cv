@@ -280,7 +280,7 @@ export const education: TimelineItem[] = [
     date: 'December 2014',
     location: 'San Jose State University',
     title: 'Masters in Software Engineering',
-    content: <p>Specilization in Enterprise Software Technologies. Introduction to technologies like Apache Storm,Apache Kafka,SpringBoot</p>,
+    content: <p>Specialization in Enterprise Software Technologies. Introduction to technologies like Apache Storm,Apache Kafka,SpringBoot</p>,
   },
   {
     date: 'August 2011',

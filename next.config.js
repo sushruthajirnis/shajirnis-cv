@@ -20,21 +20,19 @@ const nextConfig = {
   pageExtensions: ['tsx', 'mdx', 'ts'],
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
-  svgo: {
-    multipass: true,
-    plugins: ['removeDimensions'],
-  },
-  strictMode: true,
-  swcMinify: false,
-  experimental: {
-    forceSwcTransforms: false,
-  },
+  reactStrictMode: true,
+  swcMinify: true,
   trailingSlash: false,
   images: {
-    domains: ['images.unsplash.com', 'source.unsplash.com','github.com'],
-    loader: "akamai",
-    path : "",
-    
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },{
+        protocol: 'https',
+        hostname: 'source.unsplash.com',
+      },
+    ],
   },
 };
 

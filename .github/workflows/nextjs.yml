@@ -36,8 +36,9 @@ jobs:
           yarn run build
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
-
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./out
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4

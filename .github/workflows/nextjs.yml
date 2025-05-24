@@ -1,4 +1,4 @@
-lo name: Build and Deploy Next.js to GitHub Pages
+name: Build and Deploy Next.js to GitHub Pages
 
 on:
   push:

@@ -15,7 +15,6 @@ const nextConfig = {
 
     return config;
   },
-  output: 'export',
   compress: true,
   generateEtags: true,
   pageExtensions: ['tsx', 'mdx', 'ts'],

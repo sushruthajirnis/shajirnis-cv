@@ -25,7 +25,10 @@ const nextConfig = {
     plugins: ['removeDimensions'],
   },
   strictMode: true,
-  swcMinify: true,
+  swcMinify: false,
+  experimental: {
+    forceSwcTransforms: false,
+  }
   trailingSlash: false,
   images: {
     domains: ['images.unsplash.com', 'source.unsplash.com','github.com'],

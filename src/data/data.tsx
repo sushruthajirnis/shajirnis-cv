@@ -1,5 +1,6 @@
 import {
   AcademicCapIcon,
+  ArrowDownTrayIcon,
   CalendarIcon,
   FlagIcon,
   MapIcon,
@@ -79,7 +80,7 @@ export const heroData: Hero = {
       href: 'assets/resume.pdf',
       text: 'Resume',
       primary: true,
-      Icon: DownloadIcon,
+      Icon: ArrowDownTrayIcon,
     },
   ],
 };

@@ -30,19 +30,8 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Add static export config to next.config.js
-        run: |
-          if ! grep -q "output: 'export'" next.config.js; then
-            cp next.config.js next.config.js.backup
-            sed "s/const nextConfig = {/const nextConfig = {\n  output: 'export',/" next.config.js > tmp.js
-            mv tmp.js next.config.js
-          fi
-
       - name: Build site
         run: yarn build
-
-      - name: Export static site
-        run: yarn next export
 
       - name: Upload static files
         uses: actions/upload-pages-artifact@v3

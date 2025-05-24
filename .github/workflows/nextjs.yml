@@ -76,30 +76,59 @@ jobs:
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} run build
         # Add these debugging steps:
-      - name: Debug - List root directory contents
-        run: ls -la
-      
-      - name: Debug - Check if out directory exists
+      - name: Check Next.js config
         run: |
-          if [ -d "./out" ]; then
-            echo "✅ out directory exists"
-            ls -la ./out
-          else
-            echo "❌ out directory does not exist"
-            echo "Checking for other possible output directories:"
-            ls -la | grep -E "(build|dist|export)"
+          echo "=== Next.js Configuration ==="
+          cat next.config.js
+      
+      - name: Check .next directory contents
+        run: |
+          echo "=== .next directory contents ==="
+          ls -la .next/
+          if [ -d ".next/out" ]; then
+            echo "Found .next/out directory:"
+            ls -la .next/out/
           fi
       
-      - name: Debug - Check Next.js config
+      - name: Check for any output directories
         run: |
-          if [ -f "next.config.js" ]; then
-            echo "next.config.js exists:"
-            cat next.config.js
-          elif [ -f "next.config.mjs" ]; then
-            echo "next.config.mjs exists:"
-            cat next.config.mjs
+          echo "=== Looking for possible output directories ==="
+          find . -maxdepth 2 -type d -name "*out*" -o -name "*build*" -o -name "*dist*" -o -name "*export*" | head -10
+      
+      - name: Force static export if needed
+        run: |
+          echo "=== Attempting manual export ==="
+          if [ ! -d "./out" ]; then
+            echo "No out directory found, trying to create static export..."
+            # Check if next.config.js has output: 'export'
+            if grep -q "output.*export" next.config.js; then
+              echo "Config has output: 'export', rebuilding..."
+              ${{ steps.detect-package-manager.outputs.runner }} run build
+            else
+              echo "Config missing output: 'export', adding it temporarily..."
+              # Backup original config
+              cp next.config.js next.config.js.backup
+              # Add output export to config
+              sed "s/const nextConfig = {/const nextConfig = {\n  output: 'export',/" next.config.js > next.config.js.tmp
+              mv next.config.js.tmp next.config.js
+              # Rebuild with export config
+              ${{ steps.detect-package-manager.outputs.runner }} run build
+              # Restore original config
+              mv next.config.js.backup next.config.js
+            fi
+          fi
+      
+      - name: Final directory check
+        run: |
+          echo "=== Final check for out directory ==="
+          if [ -d "./out" ]; then
+            echo "✅ out directory exists!"
+            ls -la ./out | head -20
+            echo "Total files in out directory: $(find ./out -type f | wc -l)"
           else
-            echo "❌ No Next.js config file found"
+            echo "❌ Still no out directory"
+            echo "Checking .next for any output:"
+            find .next -name "*.html" -o -name "index.*" | head -10
           fi
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1.0.3

@@ -1,36 +1,26 @@
-# Sample workflow for building and deploying a Next.js site to GitHub Pages
-#
-# To get started with Next.js see: https://nextjs.org/docs/getting-started
-#
 name: Deploy Next.js site to Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # Build job
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Detect package manager
         id: detect-package-manager
         run: |
@@ -48,100 +38,82 @@ jobs:
             echo "Unable to determine package manager"
             exit 1
           fi
-      - name: Setup Node
+
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "18.18.0"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
-      - name: Setup Pages
+
+      - name: Setup Pages (Next.js static export config)
         uses: actions/configure-pages@v3
         with:
-          # Automatically inject basePath in your Next.js configuration file and disable
-          # server side image optimization (https://nextjs.org/docs/api-reference/next/image#unoptimized).
-          #
-          # You may remove this line if you want to manage the configuration yourself.
           static_site_generator: next
+
       - name: Restore cache
         uses: actions/cache@v3
         with:
-          path: |
-            .next/cache
-          # Generate a new cache whenever packages or source files change.
+          path: .next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-          # If source files changed but packages didn't, rebuild from a prior cache.
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
+          restore-keys: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
+
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-      - name: Build with Next.js
+
+      - name: Build Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} run build
-        # Add these debugging steps:
+
+      # Debug steps
       - name: Check Next.js config
-        run: |
-          echo "=== Next.js Configuration ==="
-          cat next.config.js
-      
-      - name: Check .next directory contents
-        run: |
-          echo "=== .next directory contents ==="
-          ls -la .next/
-          if [ -d ".next/out" ]; then
-            echo "Found .next/out directory:"
-            ls -la .next/out/
-          fi
-      
-      - name: Check for any output directories
-        run: |
-          echo "=== Looking for possible output directories ==="
-          find . -maxdepth 2 -type d -name "*out*" -o -name "*build*" -o -name "*dist*" -o -name "*export*" | head -10
-      
+        run: cat next.config.js
+
+      - name: List .next directory
+        run: ls -la .next/
+
+      - name: Find output directories
+        run: find . -maxdepth 2 -type d -name "*out*" -o -name "*build*" -o -name "*dist*" -o -name "*export*" | head -10
+
       - name: Force static export if needed
         run: |
-          echo "=== Attempting manual export ==="
           if [ ! -d "./out" ]; then
-            echo "No out directory found, trying to create static export..."
+            echo "No out directory found, attempting next export..."
             # Check if next.config.js has output: 'export'
             if grep -q "output.*export" next.config.js; then
-              echo "Config has output: 'export', rebuilding..."
-              ${{ steps.detect-package-manager.outputs.runner }} run build
+              echo "Config already has output: 'export', running export..."
+              ${{ steps.detect-package-manager.outputs.runner }} run export
             else
-              echo "Config missing output: 'export', adding it temporarily..."
-              # Backup original config
+              echo "Adding temporary output: 'export' to next.config.js and exporting..."
               cp next.config.js next.config.js.backup
-              # Add output export to config
               sed "s/const nextConfig = {/const nextConfig = {\n  output: 'export',/" next.config.js > next.config.js.tmp
               mv next.config.js.tmp next.config.js
-              # Rebuild with export config
-              ${{ steps.detect-package-manager.outputs.runner }} run build
-              # Restore original config
+              ${{ steps.detect-package-manager.outputs.runner }} run export
               mv next.config.js.backup next.config.js
             fi
-          fi
-      
-      - name: Final directory check
-        run: |
-          echo "=== Final check for out directory ==="
-          if [ -d "./out" ]; then
-            echo "✅ out directory exists!"
-            ls -la ./out | head -20
-            echo "Total files in out directory: $(find ./out -type f | wc -l)"
           else
-            echo "❌ Still no out directory"
-            echo "Checking .next for any output:"
-            find .next -name "*.html" -o -name "index.*" | head -10
+            echo "Found out directory, skipping export."
           fi
-      - name: Upload artifact
+
+      - name: Final check for out directory
+        run: |
+          if [ -d "./out" ]; then
+            echo "✅ out directory exists"
+            ls -la ./out | head -20
+            echo "Total files: $(find ./out -type f | wc -l)"
+          else
+            echo "❌ out directory missing!"
+          fi
+
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./out
 
-  # Deployment job
   deploy:
+    runs-on: ubuntu-latest
+    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

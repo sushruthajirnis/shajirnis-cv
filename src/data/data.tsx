@@ -98,7 +98,7 @@ export const aboutData: About = {
   Outside of work, I like reading and following my two favorite sports Tennis and Cricket as well as trying to get in a set or two of Tennis`,
   aboutItems: [
     {label: 'Location', text: 'San Diego, CA', Icon: MapIcon},
-    {label: 'Age', text: '33', Icon: CalendarIcon},
+    {label: 'Age', text: '35', Icon: CalendarIcon},
     {label: 'Nationality', text: 'Indian', Icon: FlagIcon},
     {label: 'Interests', text: 'Reading, Tennis, Cricket', Icon: SparklesIcon},
     {label: 'Study', text: 'San Jose State University', Icon: AcademicCapIcon},
@@ -249,7 +249,7 @@ export const experience: TimelineItem[] = [
     title: 'Senior Site Reliability Engineer',
     content: (
       <p>
-        Working on integrating Litmus Chaos tool to help developer teams build microservices with greater confidence and resliliency
+        Working on creating a reliable orchestration system for region evacuation for Intuit
       </p>
     ),
   },
@@ -339,8 +339,8 @@ export const contact: ContactSection = {
     },
     {
       type: ContactType.Github,
-      text: 'tbakerx',
-      href: 'https://github.com/tbakerx',
+      text: 'sushruthajirnis',
+      href: 'https://github.com/sushruthajirnis',
     },
   ],
 };

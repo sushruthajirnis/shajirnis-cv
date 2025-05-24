@@ -1,6 +1,7 @@
 import {
   AcademicCapIcon,
   ArrowDownTrayIcon,
+  BuildingOffice2Icon,
   CalendarIcon,
   FlagIcon,
   MapIcon,
@@ -101,7 +102,7 @@ export const aboutData: About = {
     {label: 'Nationality', text: 'Indian', Icon: FlagIcon},
     {label: 'Interests', text: 'Reading, Tennis, Cricket', Icon: SparklesIcon},
     {label: 'Study', text: 'San Jose State University', Icon: AcademicCapIcon},
-    {label: 'Employment', text: 'Intuit, inc.', Icon: OfficeBuildingIcon},
+    {label: 'Employment', text: 'Intuit, inc.', Icon: BuildingOffice2Icon},
   ],
 };
 

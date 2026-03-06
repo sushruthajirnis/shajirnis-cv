@@ -1,9 +1,16 @@
 // eslint-disable-next-line no-undef
+const defaultTheme = require('tailwindcss/defaultTheme');
+
+// eslint-disable-next-line no-undef
 module.exports = {
   content: ['./src/**/*.{js,ts,jsx,tsx,css,scss}'],
-  // darkMode: 'media', // or 'media' or 'class'
+  darkMode: 'media',
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['var(--font-inter)', ...defaultTheme.fontFamily.sans],
+        mono: ['var(--font-mono)', ...defaultTheme.fontFamily.mono],
+      },
       keyframes: {
         typing: {
           '0%, 100%': {width: '0%'},

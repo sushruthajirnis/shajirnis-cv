@@ -42,7 +42,8 @@ import {
  */
 export const homePageMeta: HomepageMeta = {
   title: 'Sushrut Hajirnis',
-  description: "Thank you Tim Baker for providing this wonderful template",
+  description:
+    'Senior Site Reliability Engineer at Intuit. Building reliability into infrastructure that powers prosperity around the world.',
 };
 
 /**
@@ -53,6 +54,7 @@ export const SectionId = {
   About: 'about',
   Contact: 'contact',
   Portfolio: 'portfolio',
+  Projects: 'projects',
   Resume: 'resume',
   Skills: 'skills',
   Stats: 'stats',
@@ -91,14 +93,10 @@ export const heroData: Hero = {
  */
 export const aboutData: About = {
   profileImageSrc: profilepic,
-  description: `Hi I am Sushrut Hajirnis, learner and tech-curious if that is even a word. I love all things reliability, always interested in finding 
-  out how things work behind the scenes. I was born and raised in India and moved to the United States in 2012 to pursue my Masters'. 
-  I am working as a Site Reliability Engineer at Intuit the makers of TurboTax.
-  
-  Outside of work, I like reading and following my two favorite sports Tennis and Cricket as well as trying to get in a set or two of Tennis`,
+  description: `SRE with 8+ years designing and operating large-scale distributed systems at Intuit. I've built platforms serving 500+ microservices and millions of users, with deep focus on Kubernetes, chaos engineering, and GitOps. Born and raised in India, moved to the US in 2012 for my Masters'. Outside work I follow Tennis and Cricket — and try to get in a set or two when I can.`,
   aboutItems: [
     {label: 'Location', text: 'San Diego, CA', Icon: MapIcon},
-    {label: 'Age', text: '35', Icon: CalendarIcon},
+    {label: 'Age', text: String(new Date().getFullYear() - 1989 - (new Date().getMonth() < 7 ? 1 : 0)), Icon: CalendarIcon},
     {label: 'Nationality', text: 'Indian', Icon: FlagIcon},
     {label: 'Interests', text: 'Reading, Tennis, Cricket', Icon: SparklesIcon},
     {label: 'Study', text: 'San Jose State University', Icon: AcademicCapIcon},
@@ -111,58 +109,54 @@ export const aboutData: About = {
  */
 export const skills: SkillGroup[] = [
   {
-    name: 'Spoken languages',
+    name: 'Cloud & Infrastructure',
     skills: [
-      {
-        name: 'English',
-        level: 8,
-      },
-      {
-        name: 'Marathi',
-        level: 10,
-      },
-      {
-        name: 'Hindi',
-        level: 9,
-      },
+      {name: 'Kubernetes', level: 9},
+      {name: 'AWS', level: 9},
+      {name: 'Terraform', level: 7},
+      {name: 'Docker / Helm', level: 7},
     ],
   },
   {
-    name: 'Infrastructure',
+    name: 'Observability & Reliability',
     skills: [
-      {
-        name: 'Kubernetes',
-        level: 8,
-      },
-      {
-        name: 'Observability',
-        level: 7,
-      },
-      {
-        name: 'GraphQL',
-        level: 6,
-      },
-      {
-        name: 'CloudFormation',
-        level: 5,
-      },
+      {name: 'Prometheus / Grafana', level: 9},
+      {name: 'SLO / SLI Frameworks', level: 8},
+      {name: 'PagerDuty', level: 8},
+      {name: 'OpenTelemetry', level: 7},
     ],
   },
   {
-    name: 'Backend development',
+    name: 'Chaos Engineering',
     skills: [
-      {
-        name: 'Golang',
-        level: 7,
-      },
-      {
-        name: 'Java',
-        level: 6,
-      },
-      {
-        name: 'Python',
-        level: 4,
-      },
+      {name: 'GameDay Orchestration', level: 9},
+      {name: 'Litmus Chaos', level: 8},
+      {name: 'Failure Injection', level: 8},
+    ],
+  },
+  {
+    name: 'DevOps & Automation',
+    skills: [
+      {name: 'GitOps / ArgoCD', level: 8},
+      {name: 'CI/CD Pipelines', level: 8},
+      {name: 'GitHub Actions', level: 8},
+    ],
+  },
+  {
+    name: 'Programming',
+    skills: [
+      {name: 'Python', level: 8},
+      {name: 'Golang', level: 7},
+      {name: 'Bash', level: 7},
+      {name: 'Java', level: 6},
+    ],
+  },
+  {
+    name: 'Spoken Languages',
+    skills: [
+      {name: 'Marathi', level: 10},
+      {name: 'Hindi', level: 9},
+      {name: 'English', level: 8},
     ],
   },
 ];
@@ -244,49 +238,65 @@ export const portfolioItems: PortfolioItem[] = [
  */
 export const experience: TimelineItem[] = [
   {
-    date: 'October 2015 - Present',
-    location: 'Intuit, inc',
-    title: 'Senior Site Reliability Engineer',
+    date: 'August 2019 – Present',
+    location: 'Intuit Inc · San Diego, CA',
+    title: 'Senior Software Engineer, Site Reliability Engineering',
     content: (
-      <p>
-        Working on creating a reliable orchestration system for region evacuation for Intuit
-      </p>
+      <ul className="list-disc space-y-1.5 pl-4 marker:text-violet-500">
+        <li>Architected Kubernetes-based failover platform serving 100+ microservices, reducing developer friction through custom APIs that abstract complex k8s internals</li>
+        <li>Built Python-based GameDay orchestration framework testing resilience of 150+ applications with automated failure injection and real-time observability dashboards</li>
+        <li>Maintained 99.95% uptime SLA through 24/7 on-call rotation, incident response, and root cause analysis</li>
+      </ul>
     ),
   },
   {
-    date: 'June 2015 - October 2015',
-    location: 'Qualcomm inc',
+    date: 'August 2017 – August 2019',
+    location: 'Intuit Inc · San Diego, CA',
+    title: 'Software Engineer in Quality, Platform Reliability',
+    content: (
+      <ul className="list-disc space-y-1.5 pl-4 marker:text-violet-500">
+        <li>Built end-to-end API test automation framework using Karate, achieving 85% test coverage and cutting regression time by 60%</li>
+        <li>Conducted reliability testing for the login widget across TurboTax products, ensuring seamless SSO for 50M+ users</li>
+      </ul>
+    ),
+  },
+  {
+    date: 'October 2015 – July 2017',
+    location: 'Intuit Inc · San Diego, CA',
+    title: 'Software Engineer in Quality, Identity Platform',
+    content: (
+      <ul className="list-disc space-y-1.5 pl-4 marker:text-violet-500">
+        <li>Core member of enterprise-wide authentication and SSO infrastructure supporting all Intuit product offerings</li>
+        <li>Drove failure-mode test scenarios with development teams, improving resilience and reducing production incidents</li>
+      </ul>
+    ),
+  },
+  {
+    date: 'June 2015 – October 2015',
+    location: 'Qualcomm Inc · San Diego, CA',
     title: 'Engineer I',
-    content: (
-      <p>
-        Worked on the RMS system that links network service providers and SIM registration.
-      </p>
-    ),
+    content: <p>Worked on the RMS system linking network service providers and SIM card registration.</p>,
   },
   {
-    date: 'Feb 2014 - December 2014',
-    location: 'PTC(Parametric Technology Corporation)',
+    date: 'February 2014 – December 2014',
+    location: 'PTC (Parametric Technology Corporation)',
     title: 'Software Engineer Intern',
-    content: (
-      <p>
-        Created python based scripts to automate installation and local testing of Windchill suite of products.
-      </p>
-    ),
+    content: <p>Built Python scripts to automate installation and local testing of the Windchill product suite.</p>,
   },
 ];
 
 export const education: TimelineItem[] = [
   {
     date: 'December 2014',
-    location: 'San Jose State University',
-    title: 'Masters in Software Engineering',
-    content: <p>Specialization in Enterprise Software Technologies. Introduction to technologies like Apache Storm,Apache Kafka,SpringBoot</p>,
+    location: 'San Jose State University · San Jose, CA',
+    title: 'Master of Science, Software Engineering',
+    content: <p>Specialization in Enterprise Software Technologies.</p>,
   },
   {
     date: 'August 2011',
-    location: 'University of Mumbai',
-    title: 'Bachelors in Computer Engineering',
-    content: <p>Introduction to Algorithms. Introduction to Computer Architecture. Basics of programming</p>,
+    location: 'University of Mumbai · Mumbai, India',
+    title: 'Bachelor of Engineering, Computer Engineering',
+    content: <p>Foundations in algorithms, computer architecture, and software systems.</p>,
   },
 ];
 
@@ -320,27 +330,17 @@ export const testimonial: TestimonialSection = {
 
 export const contact: ContactSection = {
   headerText: 'Get in touch.',
-  description: 'Here is a good spot for a message to your readers to let them know how best to reach out to you.',
+  description: 'Open to connecting, collaborating, or chatting about reliability engineering. Resume available on request.',
   items: [
-    {
-      type: ContactType.Email,
-      text: 'reachout@timbaker.me',
-      href: 'mailto:reachout@timbaker.me',
-    },
-    {
-      type: ContactType.Location,
-      text: 'Victoria BC, Canada',
-      href: 'https://www.google.ca/maps/place/Victoria,+BC/@48.4262362,-123.376775,14z',
-    },
-    {
-      type: ContactType.Instagram,
-      text: '@tbakerx',
-      href: 'https://www.instagram.com/tbakerx/',
-    },
     {
       type: ContactType.Github,
       text: 'sushruthajirnis',
       href: 'https://github.com/sushruthajirnis',
+    },
+    {
+      type: ContactType.LinkedIn,
+      text: 'sushruthajirnis',
+      href: 'https://www.linkedin.com/in/sushruthajirnis/',
     },
   ],
 };

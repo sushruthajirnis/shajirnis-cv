@@ -54,9 +54,9 @@ const Hero: FC = memo(() => {
             <div className="min-h-[220px] bg-slate-950 p-5 font-mono text-sm leading-relaxed sm:text-base">
               {completedLines.map((line, i) =>
                 line.text === '' ? (
-                  <div key={i} className="h-4" />
+                  <div className="h-4" key={i} />
                 ) : (
-                  <div key={i} className={line.isCommand ? 'text-violet-400' : 'text-slate-300'}>
+                  <div className={line.isCommand ? 'text-violet-400' : 'text-slate-300'} key={i}>
                     {line.text}
                   </div>
                 ),

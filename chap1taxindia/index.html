@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TaxTok — Income Tax Act 2025</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --saffron: #FF9933;
+  --saffron-dim: #cc7a29;
+  --green: #00C060;
+  --navy: #0A0A1A;
+  --white: #FAFAFA;
+  --muted: rgba(255,255,255,0.5);
+  --glass: rgba(255,255,255,0.07);
+  --glass-border: rgba(255,255,255,0.12);
+  --slide-h: 100dvh;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--navy);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--white);
+  touch-action: none;
+}
+
+/* ── FEED CONTAINER ─────────────────────────── */
+#feed {
+  height: 100dvh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  overscroll-behavior: contain;
+}
+#feed::-webkit-scrollbar { display: none; }
+
+/* ── SLIDES ─────────────────────────────────── */
+.slide {
+  height: 100dvh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 0 env(safe-area-inset-bottom, 16px);
+}
+
+/* ── BACKGROUND LAYERS ──────────────────────── */
+.slide-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.slide-bg-noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ── RIGHT SIDEBAR (TikTok-style actions) ───── */
+.sidebar {
+  position: absolute;
+  right: 12px;
+  bottom: calc(env(safe-area-inset-bottom, 16px) + 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  z-index: 20;
+}
+.sidebar-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.2s, transform 0.15s;
+}
+.sidebar-btn:active { transform: scale(0.88); opacity: 1; }
+.sidebar-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+.sidebar-label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: var(--white);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
+
+/* ── PROGRESS DOTS ──────────────────────────── */
+#progress-dots {
+  position: fixed;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transition: all 0.3s ease;
+}
+.dot.active {
+  height: 18px;
+  border-radius: 2px;
+  background: var(--saffron);
+}
+
+/* ── SLIDE COUNTER ──────────────────────────── */
+#slide-counter {
+  position: fixed;
+  top: env(safe-area-inset-top, 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.5);
+  z-index: 100;
+  letter-spacing: 1px;
+  pointer-events: none;
+}
+
+/* ── SWIPE HINT ─────────────────────────────── */
+#swipe-hint {
+  position: fixed;
+  bottom: calc(env(safe-area-inset-bottom, 16px) + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  z-index: 100;
+  pointer-events: none;
+  transition: opacity 0.5s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#swipe-hint.hidden { opacity: 0; }
+.swipe-arrow { animation: bob 1.5s ease-in-out infinite; display: inline-block; }
+@keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(4px)} }
+
+/* ── CONTENT AREA ───────────────────────────── */
+.slide-content {
+  position: relative;
+  z-index: 10;
+  padding: 20px 20px 24px;
+  max-width: 420px;
+  width: 100%;
+}
+
+/* ── TOPIC CHIP ─────────────────────────────── */
+.topic-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--saffron);
+  margin-bottom: 14px;
+}
+.topic-chip .dot-live {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--saffron);
+  animation: blink 1.2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ── BIG HEADLINE ───────────────────────────── */
+.slide-headline {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.8rem, 11vw, 4.5rem);
+  line-height: 0.95;
+  letter-spacing: 0.5px;
+  color: var(--white);
+  margin-bottom: 14px;
+}
+.slide-headline .accent { color: var(--saffron); }
+.slide-headline .green-accent { color: var(--green); }
+
+/* ── BODY TEXT ──────────────────────────────── */
+.slide-body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 16px;
+  font-weight: 300;
+}
+.slide-body strong { color: var(--white); font-weight: 500; }
+.slide-body em { color: var(--saffron); font-style: normal; font-weight: 500; }
+
+/* ── LAW CITATION ───────────────────────────── */
+.law-cite {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  color: rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px;
+  padding: 3px 8px;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
+/* ── STAT BLOCKS ────────────────────────────── */
+.stat-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.stat-pill {
+  flex: 1;
+  min-width: 80px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 12px 10px;
+  text-align: center;
+  backdrop-filter: blur(8px);
+}
+.stat-pill .big { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--saffron); line-height: 1; }
+.stat-pill .small { font-size: 0.62rem; color: var(--muted); margin-top: 2px; letter-spacing: 0.5px; }
+
+/* ── CHECKLIST ──────────────────────────────── */
+.checklist { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: rgba(255,255,255,0.85);
+}
+.check-icon {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.check-icon.yes { background: rgba(0,192,96,0.2); color: var(--green); border: 1px solid rgba(0,192,96,0.4); }
+.check-icon.no  { background: rgba(255,80,80,0.15); color: #ff6060; border: 1px solid rgba(255,80,80,0.3); }
+.check-icon.info{ background: rgba(255,153,51,0.15); color: var(--saffron); border: 1px solid rgba(255,153,51,0.3); }
+
+/* ── QUIZ SLIDE ─────────────────────────────── */
+.quiz-question-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--white);
+  margin-bottom: 18px;
+}
+.quiz-options-stack { display: flex; flex-direction: column; gap: 9px; }
+.quiz-opt {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 13px 16px;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.9);
+  cursor: pointer;
+  text-align: left;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+  width: 100%;
+  backdrop-filter: blur(8px);
+}
+.quiz-opt:active { transform: scale(0.98); }
+.quiz-opt.correct { background: rgba(0,192,96,0.25); border-color: var(--green); color: var(--white); }
+.quiz-opt.wrong   { background: rgba(255,80,80,0.2); border-color: #ff6060; color: var(--white); }
+.quiz-result-text {
+  margin-top: 14px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.8);
+  background: var(--glass);
+  border-radius: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--glass-border);
+  display: none;
+}
+.quiz-result-text.show { display: block; }
+
+/* ── PILL TAGS ──────────────────────────────── */
+.pill-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.pill {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+.pill-saffron { background: rgba(255,153,51,0.15); border: 1px solid rgba(255,153,51,0.3); color: var(--saffron); }
+.pill-green   { background: rgba(0,192,96,0.12);   border: 1px solid rgba(0,192,96,0.3);   color: var(--green); }
+.pill-red     { background: rgba(255,80,80,0.12);   border: 1px solid rgba(255,80,80,0.3);   color: #ff6060; }
+.pill-white   { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); }
+
+/* ── TABLE ──────────────────────────────────── */
+.mini-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-bottom: 12px; }
+.mini-table th { background: rgba(255,153,51,0.15); color: var(--saffron); padding: 7px 10px; text-align: left; font-weight: 500; font-size: 0.7rem; letter-spacing: 0.5px; }
+.mini-table td { padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); vertical-align: top; }
+.mini-table tr:last-child td { border-bottom: none; }
+
+/* ── GRADIENT OVERLAYS (atmospheric) ───────── */
+.grad-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ── FLOATING EMOJI BG ──────────────────────── */
+.float-emoji {
+  position: absolute;
+  font-size: clamp(5rem, 25vw, 9rem);
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+}
+
+/* ── SCORE CARD ─────────────────────────────── */
+.score-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 18px;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  margin-bottom: 12px;
+}
+.score-big { font-family: 'Bebas Neue', sans-serif; font-size: 5rem; line-height: 1; color: var(--saffron); }
+.score-label { font-size: 0.8rem; color: var(--muted); letter-spacing: 1px; margin-top: 4px; }
+
+/* ── PERSON CARD ────────────────────────────── */
+.persona-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 14px;
+  backdrop-filter: blur(8px);
+}
+.persona-avatar { font-size: 2.2rem; flex-shrink: 0; }
+.persona-name { font-size: 0.9rem; font-weight: 700; color: var(--white); }
+.persona-role { font-size: 0.72rem; color: var(--muted); margin-bottom: 6px; }
+.persona-text { font-size: 0.82rem; color: rgba(255,255,255,0.8); line-height: 1.5; }
+
+/* ── ENTRY ANIMATIONS ───────────────────────── */
+.slide-content > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.slide.in-view .slide-content > * { opacity: 1; transform: translateY(0); }
+.slide.in-view .slide-content > *:nth-child(1) { transition-delay: 0.05s; }
+.slide.in-view .slide-content > *:nth-child(2) { transition-delay: 0.12s; }
+.slide.in-view .slide-content > *:nth-child(3) { transition-delay: 0.19s; }
+.slide.in-view .slide-content > *:nth-child(4) { transition-delay: 0.26s; }
+.slide.in-view .slide-content > *:nth-child(5) { transition-delay: 0.33s; }
+.slide.in-view .slide-content > *:nth-child(6) { transition-delay: 0.40s; }
+.slide.in-view .slide-content > *:nth-child(7) { transition-delay: 0.47s; }
+
+/* ── SPECIFIC SLIDE THEMES ──────────────────── */
+/* HERO */
+#s0 .slide-bg { background: linear-gradient(160deg, #1a0a00 0%, #0A0A1A 50%, #001840 100%); }
+#s0 .float-emoji { right: -20px; top: 10%; }
+
+/* BASICS */
+#s1 .slide-bg { background: linear-gradient(160deg, #0A0A1A 0%, #001030 100%); }
+#s1 .float-emoji { right: -10px; top: 15%; }
+
+/* WHO IS TAXED */
+#s2 .slide-bg { background: linear-gradient(150deg, #0d0d0d 0%, #0A1A0A 50%, #001A10 100%); }
+#s2 .float-emoji { right: -15px; top: 8%; }
+
+/* PERSON TYPES */
+#s3 .slide-bg { background: linear-gradient(170deg, #0A0A1A 0%, #0f0020 100%); }
+
+/* INCOME */
+#s4 .slide-bg { background: linear-gradient(155deg, #1a0800 0%, #0A0A1A 60%, #0d1a00 100%); }
+#s4 .float-emoji { left: -15px; top: 20%; }
+
+/* INCOME TYPES */
+#s5 .slide-bg { background: linear-gradient(160deg, #0A0A1A 0%, #1a0a00 100%); }
+
+/* TAX YEAR */
+#s6 .slide-bg { background: linear-gradient(150deg, #001830 0%, #0A0A1A 100%); }
+#s6 .float-emoji { right: -10px; bottom: 20%; }
+
+/* ASSETS */
+#s7 .slide-bg { background: linear-gradient(160deg, #0A0A1A 0%, #1a0d00 70%, #001520 100%); }
+
+/* AGRICULTURE */
+#s8 .slide-bg { background: linear-gradient(155deg, #041a04 0%, #0A0A1A 60%, #0a1a04 100%); }
+#s8 .float-emoji { right: -10px; top: 10%; }
+
+/* CRYPTO */
+#s9 .slide-bg { background: linear-gradient(160deg, #080012 0%, #0A0A1A 50%, #001208 100%); }
+#s9 .float-emoji { right: -15px; top: 5%; }
+
+/* KEY TERMS */
+#s10 .slide-bg { background: linear-gradient(170deg, #0A0A1A 0%, #0d0d00 100%); }
+
+/* QUIZ 1-5 */
+#s11 .slide-bg { background: linear-gradient(150deg, #0A0A1A 0%, #15001a 100%); }
+#s12 .slide-bg { background: linear-gradient(160deg, #1a0800 0%, #0A0A1A 100%); }
+#s13 .slide-bg { background: linear-gradient(155deg, #0A0A1A 0%, #001a15 100%); }
+#s14 .slide-bg { background: linear-gradient(170deg, #0a1a00 0%, #0A0A1A 100%); }
+#s15 .slide-bg { background: linear-gradient(160deg, #0A0A1A 0%, #001830 100%); }
+
+/* SCORE */
+#s16 .slide-bg { background: linear-gradient(150deg, #1a0a00 0%, #0A0A1A 50%, #001840 100%); }
+
+/* ── DESKTOP FRAME ──────────────────────────── */
+@media (min-width: 480px) {
+  body { background: #050508; display: flex; align-items: center; justify-content: center; }
+  #feed {
+    width: 390px;
+    height: 844px;
+    border-radius: 40px;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 40px 120px rgba(0,0,0,0.9), 0 0 80px rgba(255,153,51,0.05);
+    overflow: hidden;
+  }
+  #progress-dots { right: calc(50% - 200px + 6px); }
+  #slide-counter { top: 12px; }
+  #swipe-hint { bottom: 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- PROGRESS DOTS -->
+<div id="progress-dots"></div>
+<div id="slide-counter">1 / 17</div>
+<div id="swipe-hint"><span class="swipe-arrow">↑</span> Swipe up</div>
+
+<div id="feed">
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 0 — HERO
+  ══════════════════════════════════════════ -->
+  <div class="slide" id="s0">
+    <div class="slide-bg"></div>
+    <div class="slide-bg-noise"></div>
+    <div class="float-emoji">📖</div>
+    <div class="grad-overlay" style="background:linear-gradient(to top, rgba(10,10,26,0.95) 0%, rgba(10,10,26,0.3) 60%, transparent 100%)"></div>
+
+    <div class="sidebar">
+      <div class="sidebar-btn" onclick="shareSlide()">
+        <div class="sidebar-icon">↗</div>
+        <div class="sidebar-label">Share</div>
+      </div>
+      <div class="sidebar-btn" onclick="bookmarkSlide(this)">
+        <div class="sidebar-icon" id="bm0">🔖</div>
+        <div class="sidebar-label">Save</div>
+      </div>
+    </div>
+
+    <div class="slide-content">
+      <div class="topic-chip"><span class="dot-live"></span> Act No. 30 of 2025</div>
+      <div class="slide-headline">India ka<br><span class="accent">Naya Tax</span><br>Kanoon</div>
+      <div class="slide-body">The Income-tax Act, 2025 replaces the 60-year-old 1961 law. This is Chapter I — the foundation of everything.</div>
+      <div class="stat-row">
+        <div class="stat-pill"><div class="big">686</div><div class="small">Pages</div></div>
+        <div class="stat-pill"><div class="big">112</div><div class="small">Definitions</div></div>
+        <div class="stat-pill"><div class="big">1 Apr<br>2026</div><div class="small">In Force</div></div>
+      </div>
+      <div class="law-cite">§ 1 — Page 1 · Assented 21 Aug 2025</div>
+      <div style="margin-top:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 12px;display:flex;align-items:flex-start;gap:8px">
+        <span style="font-size:0.9rem;flex-shrink:0">⚠️</span>
+        <span style="font-size:0.68rem;color:rgba(255,255,255,0.45);line-height:1.5;letter-spacing:0.2px">Independent educational resource. Not affiliated with the Government of India or the Income Tax Department. Not legal advice — consult a qualified CA for tax planning.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 1 — THE 3 BASICS
+  ══════════════════════════════════════════ -->
+  <div class="slide" id="s1">
+    <div class="slide-bg"></div>
+    <div class="slide-bg-noise"></div>
+    <div class="float-emoji">🏛️</div>
+    <div class="grad-overlay" style="background:linear-gradient(to top, rgba(10,10,26,0.97) 0%, rgba(10,10,26,0.2) 70%, transparent 100%)"></div>
+    <div class="sidebar">
+      <div class="sidebar-btn" onclick="bookmarkSlide(this)"><div class="sidebar-icon">🔖</div><div class="sidebar-label">Save</div></div>
+    </div>
+    <div class="slide-content">
+      <div class="topic-chip">Section 1 · The Foundation</div>
+      <div class="slide-headline">3 Rules.<br>That's <span class="accent">All.</span></div>
+      <div class="checklist">
+        <div class="check-item">
+          <div class="check-icon info">①</div>
+          <div><strong>Name:</strong> "Income-tax Act, 2025" — replaces the 1961 Act.</div>
+        </div>
+        <div class="check-item">
+          <div class="check-icon info">②</div>
+          <div><strong>Where:</strong> "It extends to the <em>whole of India</em>" — including territorial waters, seabed, continental shelf, exclusive economic zone, and airspace.</div>
+        </div>
+        <div class="check-item">
+          <div class="check-icon info">③</div>
+          <div><strong>When:</strong> Came into force on <em>1st April, 2026</em>. Presidential assent was earlier — 21 Aug 2025.</div>
+        </div>
+      </div>
+      <div class="law-cite">§ 1(1)(2)(3) · § 2(52) — Page 1, 15</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 2 — ASSESSEE
+  ══════════════════════════════════════════ -->
+  <div class="slide" id="s2">
+    <div class="slide-bg"></div>
+    <div class="slide-bg-noise"></div>
+    <div class="float-emoji">🤔</div>
+    <div class="grad-overlay" style="background:linear-gradient(to top, rgba(10,26,10,0.97) 0%, rgba(10,10,26,0.2) 70%, transparent 100%)"></div>
+    <div class="sidebar">
+      <div class="sidebar-btn" onclick="bookmarkSlide(this)"><div class="sidebar-icon">🔖</div><div class="sidebar-label">Save</div></div>
+    </div>
+    <div class="slide-content">
+      <div class="topic-chip">Section 2(11) · Assessee</div>
+      <div class="slide-headline">Kya<br>Tumhe Tax<br><span class="green-accent">Bharna</span><br>Padta Hai?</div>
+      <div class="slide-body">If you are an <strong>assessee</strong>, yes. The Act defines it as anyone by whom <em>any tax or any sum of money is payable</em> under this Act. It also includes people whose income is being assessed — even if no tax is due.</div>
+      <div class="persona-card">
+        <div class="persona-avatar">🙋</div>
+        <div>
+          <div class="persona-name">Are YOU an assessee?</div>
+          <div class="persona-role">The short answer</div>
+          <div class="persona-text">If you file returns, owe any amount, or have had any income-tax proceeding started against you — yes, you are an assessee.</div>
+        </div>
+      </div>
+      <div class="law-cite">§ 2(11)(a)(b)(c) — Page 3</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 3 — 7 TYPES OF PERSON
+  ══════════════════════════════════════════ -->
+  <div class="slide" id="s3">
+    <div class="slide-bg"></div>
+    <div class="slide-bg-noise"></div>
+    <div class="grad-overlay" style="background:linear-gradient(to top, rgba(10,10,26,0.97) 0%, rgba(10,10,26,0.15) 70%, transparent 100%)"></div>
+    <div class="slide-content">
+      <div class="topic-chip">Section 2(77) · Person</div>
+      <div class="slide-headline"><span class="accent">7 Types</span><br>of People<br>Who Pay Tax</div>
+      <div class="checklist">
+        <div class="check-item"><div class="check-icon yes">👤</div><div><strong>Individual</strong> — you, me, every human</div></div>
+        <div class="check-item"><div class="check-icon yes">🏠</div><div><strong>Hindu Undivided Family</strong> — joint family taxed as one unit</div></div>
+        <div class="check-item"><div class="check-icon yes">🏢</div><div><strong>Company</strong> — Indian or foreign</div></div>
+        <div class="check-item"><div class="check-icon yes">🤝</div><div><strong>Firm / LLP</strong> — partnerships</div></div>
+        <div class="check-item"><div class="check-icon yes">👥</div><div><strong>Association of Persons / Body of Individuals</strong> — clubs, groups</div></div>
+        <div class="check-item"><div class="check-icon yes">🏛️</div><div><strong>Local Authority</strong> — municipalities, panchayats</div></div>
+        <div class="check-item"><div class="check-icon yes">⚖️</div><div><strong>Artificial Juridical Person</strong> — trusts, universities, etc.</div></div>
+      </div>
+      <div class="law-cite">§ 2(77)(a)–(g) — Pages 18–19</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 4 — INCOME (BIG REVEAL)
+  ══════════════════════════════════════════ -->
+  <div class="slide" id="s4">
+    <div class="slide-bg"></div>
+    <div class="slide-bg-noise"></div>
+    <div class="float-emoji">💸</div>
+    <div class="grad-overlay" style="background:linear-gradient(to top, rgba(26,8,0,0.97) 0%, rgba(10,10,26,0.15) 70%, transparent 100%)"></div>
+    <div class="sidebar">
+      <div class="sidebar-btn" onclick="bookmarkSlide(this)"><div class="sidebar-icon">🔖</div><div class="sidebar-label">Save</div></div>
+    </div>
+    <div class="slide-content">
+      <div class="topic-chip">Section 2(49) · Income</div>
+      <div class="slide-headline">Income =<br>Way More<br>Than <span class="accent">Salary</span></div>
+      <div class="slide-body">The Act's definition of "income" is shockingly wide. Most people think only salary counts. Here's what is <em>explicitly listed</em>:</div>
+      <div class="pill-row">
+        <span class="pill pill-saffron">Salary</span>
+        <span class="pill pill-saffron">Business Profits</span>
+        <span class="pill pill-saffron">Dividends</span>
+        <span class="pill pill-saffron">Lottery Winnings</span>
+        <span class="pill pill-saffron">KBC Prize Money</span>
+        <span class="pill pill-saffron">Capital Gains</span>
+        <span class="pill pill-saffron">Perquisites</span>
+        <span class="pill pill-saffron">Govt Subsidies</span>
+        <span class="pill pill-saffron">Horse Race Winnings</span>
+        <span class="pill pill-saffron">Keyman Insurance</span>
+      </div>
+      <div class="law-cite">§ 2(49)(a)–(w) — Pages 14–16</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 5 — KBC / GAME SHOWS
+  ══════════════════════════════════════════ -->
+  <div class="slide" id="s5">
+    <div class="slide-bg"></div>
+    <div class="slide-bg-noise"></div>
+    <div class="grad-overlay" style="background:linear-gradient(to top, rgba(26,8,0,0.97) 0%, rgba(10,10,26,0.15) 70%, transparent 100%)"></div>
+    <div class="slide-content">
+      <div class="topic-chip">Section 2(49)(n) · Game Shows</div>
+      <div class="slide-headline">Won<br>on KBC?<br><span class="accent">Taxable.</span></div>
+      <div class="persona-card">
+        <div class="persona-avatar">📺</div>
+        <div>
+          <div class="persona-name">The Law is Explicit</div>
+          <div class="persona-role">Word-for-word from § 2(49)(A)</div>
+          <div class="persona-text">"card game and other game of any sort <strong>includes any game show, an entertainment programme on television or electronic mode</strong>, in which people compete to win prizes."</div>
+        </div>
+      </div>
+      <div class="checklist">
+        <div class="check-item"><div class="check-icon yes">✓</div><div>KBC (Kaun Banega Crorepati)</div></div>
+        <div class="check-item"><div class="check-icon yes">✓</div><div>Bigg Boss prize money</div></div>
+        <div class="check-item"><div class="check-icon yes">✓</div><div>Online gaming winnings</div></div>
+        <div class="check-item"><div class="check-icon yes">✓</div><div>Crossword puzzles, lotteries</div></div>
+        <div class="check-item"><div class="check-icon yes">✓</div><div>Horse race betting</div></div>
+      </div>
+      <div class="law-cite">§ 2(49)(n)(A) — Pages 15–16</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 6 — TAX YEAR
+  ══════════════════════════════════════════ -->
+  <div class="slide" id="s6">
+    <div class="slide-bg"></div>
+    <div class="slide-bg-noise"></div>
+    <div class="float-emoji">📅</div>
+    <div class="grad-overlay" style="background:linear-gradient(to top, rgba(0,24,48,0.97) 0%, rgba(10,10,26,0.15) 70%, transparent 100%)"></div>
+    <div class="slide-content">
+      <div class="topic-chip">Section 3 · Tax Year</div>
+      <div class="slide-headline">Big<br>Change<br>from <span class="accent">1961</span></div>
+      <div class="slide-body">The old law had a confusing split: "Previous Year" (when you earn) vs "Assessment Year" (when you're taxed). The 2025 Act merges them into one concept:</div>
+      <div class="stat-row" style="margin-bottom:14px">
+        <div class="stat-pill" style="flex:2">
+          <div class="big" style="font-size:1.4rem;line-height:1.3">Apr 1 → Mar 31</div>
+          <div class="small">One "Tax Year" = 12 months</div>
+        </div>
+      </div>
+      <div class="persona-card">
+        <div class="persona-avatar">🚀</div>
+        <div>
+          <div class="persona-name">Started a business on 15 Oct 2026?</div>
+          <div class="persona-role">§ 3(2)(a)</div>
+          <div class="persona-text">Your first tax year runs from <strong>15 Oct 2026 → 31 Mar 2027</strong>. Not a full year — just until March 31.</div>
+        </div>
+      </div>
+      <div class="law-cite">§ 3(1)(2)(a) — Page 26</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 7 — CAPITAL ASSETS
+  ══════════════════════════════════════════ -->
+  <div class="slide" id="s7">
+    <div class="slide-bg"></div>
+    <div class="slide-bg-noise"></div>
+    <div class="grad-overlay" style="background:linear-gradient(to top, rgba(10,10,26,0.97) 0%, rgba(10,10,26,0.15) 70%, transparent 100%)"></div>
+    <div class="slide-content">
+      <div class="topic-chip">Section 2(101) · Capital Assets</div>
+      <div class="slide-headline">Short vs<br>Long<br><span class="accent">Term</span></div>
+      <div class="slide-body">Selling something valuable? How long you held it decides your tax category.</div>
+      <table class="mini-table">
+        <thead><tr><th>Asset Type</th><th>Short-Term if ≤</th></tr></thead>
+        <tbody>
+          <tr><td>Property, Gold, Jewellery</td><td style="color:var(--saffron)">24 months</td></tr>
+          <tr><td>Listed Shares (NSE/BSE)</td><td style="color:var(--green)">12 months</td></tr>
+          <tr><td>Equity Mutual Funds</td><td style="color:var(--green)">12 months</td></tr>
+          <tr><td>Zero-Coupon Bonds</td><td style="color:var(--green)">12 months</td></tr>
+          <tr><td>Unit Trust of India</td><td style="color:var(--green)">12 months</td></tr>
+        </tbody>
+      </table>
+      <div class="slide-body" style="font-size:0.78rem">Beyond the threshold = <em>Long-Term Capital Asset</em>. Different tax rates apply (specified in later chapters).</div>
+      <div class="law-cite">§ 2(101)(a)(b) — Pages 21–24</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 8 — AGRICULTURE
+  ══════════════════════════════════════════ -->
+  <div class="slide" id="s8">
+    <div class="slide-bg"></div>
+    <div class="slide-bg-noise"></div>
+    <div class="float-emoji">🌾</div>
+    <div class="grad-overlay" style="background:linear-gradient(to top, rgba(4,26,4,0.97) 0%, rgba(10,10,26,0.15) 70%, transparent 100%)"></div>
+    <div class="slide-content">
+      <div class="topic-chip">Section 2(5) · Agricultural Income</div>
+      <div class="slide-headline">Farmer<br>ka <span class="green-accent">Hisaab</span></div>
+      <div class="slide-body">Agricultural income is defined — not automatically exempt. The definition matters because only what fits §2(5) can claim that status.</div>
+      <div class="checklist">
+        <div class="check-item"><div class="check-icon yes">✓</div><div>Rent/revenue from farmland in India used for agriculture</div></div>
+        <div class="check-item"><div class="check-icon yes">✓</div><div>Income from farming the land directly</div></div>
+        <div class="check-item"><div class="check-icon yes">✓</div><div>Processing produce to make it market-ready (husking, etc.)</div></div>
+        <div class="check-item"><div class="check-icon yes">✓</div><div>Seedlings/saplings grown in a nursery</div></div>
+        <div class="check-item"><div class="check-icon no">✗</div><div>Renting farmhouse as holiday home or for business = <strong>NOT agricultural income</strong></div></div>
+        <div class="check-item"><div class="check-icon no">✗</div><div>Selling farmland near a city (becomes capital asset)</div></div>
+      </div>
+      <div class="law-cite">§ 2(5)(a)–(d)(i)(ii) — Pages 1–2</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 9 — CRYPTO / VDA
+  ══════════════════════════════════════════ -->
+  <div class="slide" id="s9">
+    <div class="slide-bg"></div>
+    <div class="slide-bg-noise"></div>
+    <div class="float-emoji">₿</div>
+    <div class="grad-overlay" style="background:linear-gradient(to top, rgba(8,0,18,0.97) 0%, rgba(10,10,26,0.15) 70%, transparent 100%)"></div>
+    <div class="sidebar">
+      <div class="sidebar-btn" onclick="bookmarkSlide(this)"><div class="sidebar-icon">🔖</div><div class="sidebar-label">Save</div></div>
+    </div>
+    <div class="slide-content">
+      <div class="topic-chip">Section 2(111) · Virtual Digital Assets</div>
+      <div class="slide-headline">Crypto<br>is Now<br><span class="accent">Law.</span></div>
+      <div class="slide-body">For the first time in Indian tax law, a full legal definition. It covers 4 sub-clauses:</div>
+      <div class="checklist">
+        <div class="check-item"><div class="check-icon info">①</div><div><strong>Crypto / Tokens</strong> — Bitcoin, Ethereum, meme coins: any cryptographically-generated token with value that can be transferred or traded electronically</div></div>
+        <div class="check-item"><div class="check-icon info">②</div><div><strong>NFTs</strong> — "non-fungible token or any other token of similar nature, by whatever name called"</div></div>
+        <div class="check-item"><div class="check-icon info">③</div><div><strong>Future assets</strong> — Govt can notify new digital asset types via notification</div></div>
+        <div class="check-item"><div class="check-icon info">④</div><div><strong>Blockchain assets</strong> — "relies on a cryptographically secured distributed ledger"</div></div>
+      </div>
+      <div class="law-cite">§ 2(111)(a)(b)(c)(d) — Pages 25–26</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 10 — KEY TERMS FLASH
+  ══════════════════════════════════════════ -->
+  <div class="slide" id="s10">
+    <div class="slide-bg"></div>
+    <div class="slide-bg-noise"></div>
+    <div class="grad-overlay" style="background:linear-gradient(to top, rgba(13,13,0,0.97) 0%, rgba(10,10,26,0.15) 70%, transparent 100%)"></div>
+    <div class="slide-content">
+      <div class="topic-chip">Quick Reference · Key Definitions</div>
+      <div class="slide-headline">Words<br>You Must<br><span class="accent">Know</span></div>
+      <div class="checklist">
+        <div class="check-item"><div class="check-icon info">🪪</div><div><strong>PAN</strong> — "a unique number consisting of <em>ten alphanumeric characters</em>" (§2(76))</div></div>
+        <div class="check-item"><div class="check-icon info">👴</div><div><strong>Senior Citizen</strong> — individual resident in India who is <em>60 years or more</em> at any time during the tax year (§2(100))</div></div>
+        <div class="check-item"><div class="check-icon info">👨‍👩‍👧</div><div><strong>Relative</strong> — husband, wife, brother, sister, or any lineal ascendant/descendant (§2(94))</div></div>
+        <div class="check-item"><div class="check-icon info">👶</div><div><strong>Child</strong> — includes <em>step-child and adopted child</em> (§2(25))</div></div>
+        <div class="check-item"><div class="check-icon info">📚</div><div><strong>Books of Account</strong> — includes records on <em>cloud, external hard drives, memory cards</em> (§2(19))</div></div>
+        <div class="check-item"><div class="check-icon info">💰</div><div><strong>Tax</strong> — simply "income-tax chargeable under this Act" (§2(106))</div></div>
+      </div>
+      <div class="law-cite">§ 2(19)(25)(76)(94)(100)(106)</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 11 — QUIZ 1
+  ══════════════════════════════════════════ -->
+  <div class="slide" id="s11">
+    <div class="slide-bg"></div>
+    <div class="slide-bg-noise"></div>
+    <div class="grad-overlay" style="background:linear-gradient(to top, rgba(10,10,26,0.97) 0%, rgba(10,10,26,0.15) 70%, transparent 100%)"></div>
+    <div class="slide-content">
+      <div class="topic-chip"><span class="dot-live"></span> Quiz · 1 of 5</div>
+      <div class="slide-headline">Test<br>Your <span class="accent">Self</span></div>
+      <div class="quiz-question-text">When did the Income-tax Act, 2025 come into force?</div>
+      <div class="quiz-options-stack" id="q1-opts">
+        <button class="quiz-opt" onclick="answerQ(1, this, false)">21 August 2025</button>
+        <button class="quiz-opt" onclick="answerQ(1, this, true)">1 April 2026</button>
+        <button class="quiz-opt" onclick="answerQ(1, this, false)">1 January 2026</button>
+        <button class="quiz-opt" onclick="answerQ(1, this, false)">1 April 2025</button>
+      </div>
+      <div class="quiz-result-text" id="q1-result">
+        ✅ <strong>1 April 2026.</strong> Section 1(3) states: "it shall come into force on the 1st April, 2026." The 21 Aug 2025 date was Presidential assent — different from when it became operative. <span class="law-cite">§ 1(3) — Page 1</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 12 — QUIZ 2
+  ══════════════════════════════════════════ -->
+  <div class="slide" id="s12">
+    <div class="slide-bg"></div>
+    <div class="slide-bg-noise"></div>
+    <div class="grad-overlay" style="background:linear-gradient(to top, rgba(26,8,0,0.97) 0%, rgba(10,10,26,0.15) 70%, transparent 100%)"></div>
+    <div class="slide-content">
+      <div class="topic-chip"><span class="dot-live"></span> Quiz · 2 of 5</div>
+      <div class="slide-headline"><span class="accent">KBC</span> Jeet<br>— Taxable?</div>
+      <div class="quiz-question-text">Priya wins ₹10 lakh on a popular TV quiz show. Is this taxable income?</div>
+      <div class="quiz-options-stack" id="q2-opts">
+        <button class="quiz-opt" onclick="answerQ(2, this, true)">Yes — TV game shows are explicitly income under § 2(49)</button>
+        <button class="quiz-opt" onclick="answerQ(2, this, false)">No — TV prizes aren't mentioned</button>
+        <button class="quiz-opt" onclick="answerQ(2, this, false)">Only if more than ₹50 lakh</button>
+        <button class="quiz-opt" onclick="answerQ(2, this, false)">Only if she's a resident</button>
+      </div>
+      <div class="quiz-result-text" id="q2-result">
+        ✅ <strong>Yes, fully taxable.</strong> § 2(49)(n) covers "card games and other games of any sort." § 2(49)(A) clarifies this "includes any game show, an entertainment programme on television or electronic mode, in which people compete to win prizes." <span class="law-cite">§ 2(49)(n)(A) — Pages 15–16</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 13 — QUIZ 3
+  ══════════════════════════════════════════ -->
+  <div class="slide" id="s13">
+    <div class="slide-bg"></div>
+    <div class="slide-bg-noise"></div>
+    <div class="grad-overlay" style="background:linear-gradient(to top, rgba(10,10,26,0.97) 0%, rgba(10,10,26,0.15) 70%, transparent 100%)"></div>
+    <div class="slide-content">
+      <div class="topic-chip"><span class="dot-live"></span> Quiz · 3 of 5</div>
+      <div class="slide-headline">Shares<br>Held<br><span class="green-accent">10 Months</span></div>
+      <div class="quiz-question-text">Amit buys Reliance shares listed on NSE in Jan 2026, sells in Nov 2026. Short-term or long-term?</div>
+      <div class="quiz-options-stack" id="q3-opts">
+        <button class="quiz-opt" onclick="answerQ(3, this, true)">Short-term — listed shares need 12 months for long-term</button>
+        <button class="quiz-opt" onclick="answerQ(3, this, false)">Long-term — shares always long-term after 6 months</button>
+        <button class="quiz-opt" onclick="answerQ(3, this, false)">Short-term — because 24 months applies to all assets</button>
+        <button class="quiz-opt" onclick="answerQ(3, this, false)">Long-term — the 24-month rule applies here</button>
+      </div>
+      <div class="quiz-result-text" id="q3-result">
+        ✅ <strong>Short-term.</strong> The general rule is 24 months, but § 2(101)(b)(i) reduces this to <strong>12 months</strong> for securities listed on a recognised stock exchange. Amit held 10 months → Short-Term Capital Asset. <span class="law-cite">§ 2(101)(b)(i) — Page 21</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 14 — QUIZ 4
+  ══════════════════════════════════════════ -->
+  <div class="slide" id="s14">
+    <div class="slide-bg"></div>
+    <div class="slide-bg-noise"></div>
+    <div class="grad-overlay" style="background:linear-gradient(to top, rgba(10,26,0,0.97) 0%, rgba(10,10,26,0.15) 70%, transparent 100%)"></div>
+    <div class="slide-content">
+      <div class="topic-chip"><span class="dot-live"></span> Quiz · 4 of 5</div>
+      <div class="slide-headline">Farm<br>+ Holiday<br><span class="accent">Home</span></div>
+      <div class="quiz-question-text">Ramesh farms wheat AND rents his farmhouse to city couples as a weekend getaway. Which income is agricultural?</div>
+      <div class="quiz-options-stack" id="q4-opts">
+        <button class="quiz-opt" onclick="answerQ(4, this, false)">Both — farmland and farmhouse rental</button>
+        <button class="quiz-opt" onclick="answerQ(4, this, true)">Only farming — the holiday rental is NOT agricultural</button>
+        <button class="quiz-opt" onclick="answerQ(4, this, false)">Only the rental — house is on agricultural land</button>
+        <button class="quiz-opt" onclick="answerQ(4, this, false)">Neither — rural income is fully exempt</button>
+      </div>
+      <div class="quiz-result-text" id="q4-result">
+        ✅ <strong>Only the farming income.</strong> § 2(5)(c)(i) explicitly excludes income from a farm building used "for any purpose (including letting for residential purpose…) other than agriculture." Renting as holiday home = residential purpose = taxable income. <span class="law-cite">§ 2(5)(c)(i) — Page 2</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 15 — QUIZ 5
+  ══════════════════════════════════════════ -->
+  <div class="slide" id="s15">
+    <div class="slide-bg"></div>
+    <div class="slide-bg-noise"></div>
+    <div class="grad-overlay" style="background:linear-gradient(to top, rgba(0,24,48,0.97) 0%, rgba(10,10,26,0.15) 70%, transparent 100%)"></div>
+    <div class="slide-content">
+      <div class="topic-chip"><span class="dot-live"></span> Quiz · 5 of 5</div>
+      <div class="slide-headline">New<br>Business,<br><span class="accent">New Year</span></div>
+      <div class="quiz-question-text">Neha starts a cloud kitchen on 10 August 2026. When does her first tax year begin and end?</div>
+      <div class="quiz-options-stack" id="q5-opts">
+        <button class="quiz-opt" onclick="answerQ(5, this, false)">1 Apr 2026 to 31 Mar 2027 — always full year</button>
+        <button class="quiz-opt" onclick="answerQ(5, this, true)">10 Aug 2026 to 31 Mar 2027 — from setup to year end</button>
+        <button class="quiz-opt" onclick="answerQ(5, this, false)">10 Aug 2026 to 10 Aug 2027 — full year from setup</button>
+        <button class="quiz-opt" onclick="answerQ(5, this, false)">1 Apr 2027 to 31 Mar 2028 — next year's cycle</button>
+      </div>
+      <div class="quiz-result-text" id="q5-result">
+        ✅ <strong>10 Aug 2026 to 31 Mar 2027.</strong> § 3(2)(a): "the tax year shall be the period beginning with the date of setting up of such business or profession… and ending with the said financial year." Financial year ends on 31 March. <span class="law-cite">§ 3(2)(a) — Page 26</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 16 — SCORE + END
+  ══════════════════════════════════════════ -->
+  <div class="slide" id="s16">
+    <div class="slide-bg"></div>
+    <div class="slide-bg-noise"></div>
+    <div class="float-emoji">🏆</div>
+    <div class="grad-overlay" style="background:linear-gradient(to top, rgba(26,10,0,0.97) 0%, rgba(10,10,26,0.15) 70%, transparent 100%)"></div>
+    <div class="slide-content">
+      <div class="topic-chip">Done! Chapter I Complete</div>
+      <div class="slide-headline">Your<br>Score</div>
+      <div class="score-card">
+        <div class="score-big" id="final-score">–/5</div>
+        <div class="score-label" id="score-msg">Answer the quiz slides to see your score</div>
+      </div>
+      <div class="slide-body">Every answer in this guide is grounded in the <strong>Income-tax Act, 2025</strong> [Act No. 30 of 2025], assented by the President of India on 21 August 2025.</div>
+      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:14px;margin-top:8px">
+        <div style="font-size:0.72rem;font-weight:600;color:rgba(255,153,51,0.8);letter-spacing:0.8px;margin-bottom:6px">DISCLAIMER</div>
+        <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);line-height:1.6">This is an <strong style="color:rgba(255,255,255,0.7)">independent educational resource</strong> and is not affiliated with, endorsed by, or connected to the Government of India or the Income Tax Department of India. It does not carry any official logos, seals, or government branding. All content is for general awareness only and does <strong style="color:rgba(255,255,255,0.7)">not constitute legal or tax advice</strong>. For personalised tax guidance, consult a Chartered Accountant licensed under the Chartered Accountants Act, 1949.</div>
+      </div>
+      <div style="margin-top:16px">
+        <button onclick="restartFeed()" style="background:var(--saffron);color:#000;border:none;border-radius:12px;padding:13px 28px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;width:100%">↩ Watch Again</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /feed -->
+
+<script>
+const TOTAL = 17;
+let currentSlide = 0;
+let answers = {};
+let bookmarks = new Set();
+
+// ── DOTS ────────────────────────────────────
+const dotsEl = document.getElementById('progress-dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  dotsEl.appendChild(d);
+}
+function updateDots(idx) {
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.className = 'dot' + (i === idx ? ' active' : '');
+  });
+  document.getElementById('slide-counter').textContent = `${idx + 1} / ${TOTAL}`;
+}
+
+// ── INTERSECTION OBSERVER ────────────────────
+const slides = document.querySelectorAll('.slide');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in-view');
+      const idx = [...slides].indexOf(e.target);
+      currentSlide = idx;
+      updateDots(idx);
+      if (idx > 0) document.getElementById('swipe-hint').classList.add('hidden');
+      if (idx >= TOTAL - 1) updateScore();
+    }
+  });
+}, { threshold: 0.6, root: document.getElementById('feed') });
+slides.forEach(s => io.observe(s));
+
+// ── TOUCH / KEYBOARD NAV ─────────────────────
+let touchStartY = 0;
+const feed = document.getElementById('feed');
+feed.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
+feed.addEventListener('touchend', e => {
+  const dy = touchStartY - e.changedTouches[0].clientY;
+  if (Math.abs(dy) > 40) {
+    const dir = dy > 0 ? 1 : -1;
+    const next = Math.max(0, Math.min(TOTAL - 1, currentSlide + dir));
+    slides[next].scrollIntoView({ behavior: 'smooth' });
+  }
+}, { passive: true });
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+    const next = Math.min(TOTAL - 1, currentSlide + 1);
+    slides[next].scrollIntoView({ behavior: 'smooth' });
+  }
+  if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+    const prev = Math.max(0, currentSlide - 1);
+    slides[prev].scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
+// ── QUIZ ─────────────────────────────────────
+function answerQ(qNum, btn, isCorrect) {
+  if (answers[qNum] !== undefined) return;
+  answers[qNum] = isCorrect ? 1 : 0;
+  const opts = btn.closest('.quiz-options-stack').querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.disabled = true; });
+  btn.classList.add(isCorrect ? 'correct' : 'wrong');
+  const result = document.getElementById('q' + qNum + '-result');
+  if (!isCorrect) result.innerHTML = '❌ Not quite. ' + result.innerHTML.replace('✅', '');
+  result.classList.add('show');
+  updateScore();
+}
+
+function updateScore() {
+  const answered = Object.keys(answers).length;
+  if (answered === 0) return;
+  const total = Object.values(answers).reduce((a, b) => a + b, 0);
+  document.getElementById('final-score').textContent = total + '/5';
+  const msgs = [
+    'Keep reading — more to learn!',
+    'Good start! Review the missed ones.',
+    'Decent! Most Indians don\'t know this much.',
+    'Very good! You know Chapter I well.',
+    'Outstanding! Tax-aware citizen! 🎉'
+  ];
+  document.getElementById('score-msg').textContent = msgs[total] || '';
+}
+
+// ── BOOKMARK ─────────────────────────────────
+function bookmarkSlide(btn) {
+  const icon = btn.querySelector('.sidebar-icon');
+  icon.textContent = bookmarks.has(currentSlide) ? '🔖' : '❤️';
+  if (bookmarks.has(currentSlide)) bookmarks.delete(currentSlide);
+  else bookmarks.add(currentSlide);
+}
+
+// ── SHARE ────────────────────────────────────
+function shareSlide() {
+  if (navigator.share) {
+    navigator.share({ title: 'TaxTok — Income Tax Act 2025', text: 'Learn Chapter I of India\'s new Income Tax Act 2025 in under 2 minutes!', url: window.location.href });
+  } else {
+    navigator.clipboard?.writeText(window.location.href);
+    alert('Link copied!');
+  }
+}
+
+// ── RESTART ──────────────────────────────────
+function restartFeed() {
+  slides[0].scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('swipe-hint').classList.remove('hidden');
+}
+</script>
+</body>
+</html>
